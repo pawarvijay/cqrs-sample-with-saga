@@ -8,7 +8,7 @@ var colors = require('../colors')
 var domain = require('cqrs-domain')({
     domainPath: __dirname + '/lib',
     eventStore: {
-        type: 'inMemory', //'mongodb',
+        type: 'mongodb', //'mongodb',
         dbName: 'cqrssample'
     }
 });

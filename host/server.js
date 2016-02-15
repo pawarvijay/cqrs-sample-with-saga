@@ -28,11 +28,11 @@ console.log('\nBOOTSTRAPPING:'.cyan);
 var options = {
     denormalizerPath: __dirname + '/viewBuilders',
     repository: {
-        type: 'inMemory', //'mongodb',
+        type: 'mongodb', //'mongodb',
         dbName: 'cqrssample'
     },
     revisionGuardStore: {
-        type: 'inMemory', //'mongodb',
+        type: 'mongodb', //'mongodb',
         dbName: 'cqrssample'
     }
 };
