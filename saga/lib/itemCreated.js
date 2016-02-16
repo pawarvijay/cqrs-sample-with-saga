@@ -17,69 +17,54 @@ module.exports = require('cqrs-saga').defineSaga({// event to match...
     priority: 1 // optional, default Infinity, all sagas will be sorted by this value
 }, function (evt, saga, callback) {
 
-    console.log('Hiee! I reached in Saga')
+    // if you have multiple concurrent events that targets the same saga, you can catch it like this:
+    //if (saga.actionOnCommit === 'create') {
+       // return this.retry(callback);
+        // or
+        //return this.retry(100, callback); // retries to handle again in 0-100ms
+        // or
+        //return this.retry({ from: 500, to: 8000 }, callback); // retries to handle again in 500-8000ms
+   // }
 
-    saga.set('orderId', 1234);
-    saga.set('totalCosts', 5678);
+    saga.set('orderId', 55555);
+    saga.set('totalCosts', 4444);
+    // or
+    // saga.set({ orderId: evt.aggregate.id, totalCosts: evt.payload.totalCosts });
+
+/*    var cmd = {
+
+        // if you don't pass an id it will generate a new one
+        id: '99969849-c791-4ea6-8efb-2f753fdcdfca',
+        name: 'createAcccount',
+        aggregate: {
+            name: 'account'
+        },
+        payload: {
+            transactionId: 99999999999999,
+            seats: 88888888
+        },
+
+        // to transport meta infos (like userId)...
+        // if not defined, it will use the meta value of the event
+        meta: evt.meta
+    };*/
+
+
+    var cmd =  {
+        id: '99969849-c791-4ea6-8efb-2f753fdcdfca',
+        command: 'createAcccount',
+        payload: {
+            transactionId: 99999999999999,
+            seats: 88888888
+        },
+
+        meta: evt.meta
+    }
+
+    saga.addCommandToSend(cmd);
+
+    saga.commit(callback);
 });
-// or
-// saga.set({ orderId: evt.aggregate.id, totalCosts: evt.payload.totalCosts });
-
-/*var cmd = {
-
- // if you don't pass an id it will generate a new one
- id: 'my own command id',
- name: 'makeReservation',
- aggregate: {
- name: 'reservation'
- },
- context: {
- name: 'sale'
- },
- payload: {
- transactionId: saga.id,
- seats: saga.has('seats') ? saga.get('seats') : evt.payload.seats
- },
-
- // to transport meta infos (like userId)...
- // if not defined, it will use the meta value of the event
- meta: evt.meta
- };*/
-
-//saga.addCommandToSend(cmd);
-
-// optionally define a timeout
-// this can be useful if you have an other process that will fetch timeouted sagas
-/*    var tomorrow = new Date();
- tomorrow.setDate((new Date()).getDate() + 1);
- var timeoutCmd = {
-
- // if you don't pass an id it will generate a new one
- id: 'my own command id',
- name: 'cancelOrder',
- aggregate: {
- name: 'order',
- id: evt.aggregate.id
- },
- context: {
- name: 'sale'
- },
- payload: {
- transactionId: saga.id
- },
-
- // to transport meta infos (like userId)...
- // if not defined, it will use the meta value of the event
- meta: evt.meta
- };*/
-//saga.defineTimeout(tomorrow, [timeoutCmd]);
-// or
-// saga.defineTimeout(tomorrow, timeoutCmd);
-// or
-// saga.defineTimeout(tomorrow);
-
-//saga.commit(callback);
-//});
 // optional define a function to that returns an id that will be used as saga id
 //.useAsId(function (evt) {
 //  return 'newId';
@@ -97,4 +82,3 @@ module.exports = require('cqrs-saga').defineSaga({// event to match...
 //.defineShouldHandle(function (evt, saga, callback) {
 //  callback(null, true');
 //});
-

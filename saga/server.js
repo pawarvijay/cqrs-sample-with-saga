@@ -52,17 +52,18 @@ var pm = require('cqrs-saga')({
     // the revisionguard only works if aggregateId and revision are defined in event definition
     // currently supports: mongodb, redis, tingodb, azuretable and inmemory
     // hint settings like: [eventstore](https://github.com/adrai/node-eventstore#provide-implementation-for-storage)
+
     revisionGuard: {
         queueTimeout: 1000,                         // optional, timeout for non-handled events in the internal in-memory queue
-        queueTimeoutMaxLoops: 3,                     // optional, maximal loop count for non-handled event in the internal in-memory queue
+        queueTimeoutMaxLoops: 3,                    // optional, maximal loop count for non-handled event in the internal in-memory queue
 
-        type: 'redis',
+        type: 'mongodb',
         host: 'localhost',                          // optional
-        port: 6379,                                 // optional
-        db: 0,                                      // optional
-        prefix: 'readmodel_revision',               // optional
+        port: 27017,                                // optional
+        dbName: 'domain',                        // optional
+        //prefix: 'readmodel_revision',             // optional
         timeout: 10000                              // optional
-        // password: 'secret'                          // optional
+        // password: 'secret'                       // optional
     }
 });
 
@@ -81,6 +82,8 @@ pm.defineEvent({
 
     // optional, default is 'aggregate.id'
     aggregateId: 'payload.id',
+
+    aggregate: 'aggregate.name',
 
     // optional, default is 'revision'
     // will represent the aggregate revision, can be used in next command
@@ -112,6 +115,12 @@ pm.init(function (err, warnings) {
         console.log(colors.cyan('\n->saga handle event ' + evt.event));
 
         pm.handle(evt);
+    });
+
+    // pass commands to bus
+    pm.onCommand(function (cmd) {
+        console.log('hello')
+        msgbus.emitCommand(cmd);
     });
 
     console.log('Starting saga service'.cyan);
